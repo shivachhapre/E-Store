@@ -1,0 +1,77 @@
+services:
+  # Shell Application (Main Container)
+  - type: web
+    name: shell-app
+    env: static
+    buildCommand: |
+      cd apps/shell
+      npm install
+      npm run build
+    staticPublishPath: ./apps/shell/dist
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PUBLIC_PATH
+        value: https://your-shell-app.onrender.com/
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+  # Home Module
+  - type: web
+    name: home-module
+    env: static
+    buildCommand: |
+      cd apps/home
+      npm install
+      npm run build
+    staticPublishPath: ./apps/home/dist
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PUBLIC_PATH
+        value: https://your-home-module.onrender.com/
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+  # Products Module
+  - type: web
+    name: products-module
+    env: static
+    buildCommand: |
+      cd apps/products
+      npm install
+      npm run build
+    staticPublishPath: ./apps/products/dist
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PUBLIC_PATH
+        value: https://your-products-module.onrender.com/
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+  # Profile Module
+  - type: web
+    name: profile-module
+    env: static
+    buildCommand: |
+      cd apps/profile
+      npm install
+      npm run build
+    staticPublishPath: ./apps/profile/dist
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PUBLIC_PATH
+        value: https://your-profile-module.onrender.com/
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+

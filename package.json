@@ -1,0 +1,27 @@
+{
+  "name": "micro-frontend-ecommerce",
+  "version": "1.0.0",
+  "description": "E-commerce micro-frontend application",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:shell\" \"npm run dev:home\" \"npm run dev:products\" \"npm run dev:profile\"",
+    "dev:shell": "cd apps/shell && npm run dev",
+    "dev:home": "cd apps/home && npm run dev",
+    "dev:products": "cd apps/products && npm run dev",
+    "dev:profile": "cd apps/profile && npm run dev",
+    "build": "npm run build:shell && npm run build:home && npm run build:products && npm run build:profile",
+    "build:shell": "cd apps/shell && npm run build",
+    "build:home": "cd apps/home && npm run build",
+    "build:products": "cd apps/products && npm run build",
+    "build:profile": "cd apps/profile && npm run build",
+    "install:all": "npm install && npm run install:apps",
+    "install:apps": "cd apps/shell && npm install && cd ../home && npm install && cd ../products && npm install && cd ../profile && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

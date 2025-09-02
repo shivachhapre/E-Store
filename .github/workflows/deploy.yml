@@ -1,0 +1,102 @@
+name: Deploy Micro-Frontend Modules
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        module: [shell, home, products, profile]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: |
+        npm ci
+        npm run install:apps
+        
+    - name: Build ${{ matrix.module }} module
+      run: |
+        cd apps/${{ matrix.module }}
+        npm run build
+        
+    - name: Deploy to Netlify (Shell)
+      if: matrix.module == 'shell'
+      uses: nwtgck/actions-netlify@v2.0
+      with:
+        publish-dir: './apps/shell/dist'
+        production-branch: main
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        deploy-message: "Deploy Shell module"
+      env:
+        NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SHELL_SITE_ID }}
+        
+    - name: Deploy to Netlify (Home)
+      if: matrix.module == 'home'
+      uses: nwtgck/actions-netlify@v2.0
+      with:
+        publish-dir: './apps/home/dist'
+        production-branch: main
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        deploy-message: "Deploy Home module"
+      env:
+        NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        NETLIFY_SITE_ID: ${{ secrets.NETLIFY_HOME_SITE_ID }}
+        
+    - name: Deploy to Netlify (Products)
+      if: matrix.module == 'products'
+      uses: nwtgck/actions-netlify@v2.0
+      with:
+        publish-dir: './apps/products/dist'
+        production-branch: main
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        deploy-message: "Deploy Products module"
+      env:
+        NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        NETLIFY_SITE_ID: ${{ secrets.NETLIFY_PRODUCTS_SITE_ID }}
+        
+    - name: Deploy to Netlify (Profile)
+      if: matrix.module == 'profile'
+      uses: nwtgck/actions-netlify@v2.0
+      with:
+        publish-dir: './apps/profile/dist'
+        production-branch: main
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        deploy-message: "Deploy Profile module"
+      env:
+        NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        NETLIFY_SITE_ID: ${{ secrets.NETLIFY_PROFILE_SITE_ID }}
+        
+    - name: Deploy to AWS S3 (Alternative)
+      if: matrix.module == 'shell'
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+        
+    - name: Sync to S3
+      if: matrix.module == 'shell'
+      run: |
+        aws s3 sync apps/${{ matrix.module }}/dist s3://${{ secrets.S3_BUCKET_NAME }}-${{ matrix.module }} --delete
+        
+    - name: Invalidate CloudFront
+      if: matrix.module == 'shell'
+      run: |
+        aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
+

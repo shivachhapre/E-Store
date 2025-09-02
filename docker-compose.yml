@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  shell:
+    build: ./apps/shell
+    ports:
+      - "3000:80"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - micro-frontend-network
+
+  home:
+    build: ./apps/home
+    ports:
+      - "3001:80"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - micro-frontend-network
+
+  products:
+    build: ./apps/products
+    ports:
+      - "3002:80"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - micro-frontend-network
+
+  profile:
+    build: ./apps/profile
+    ports:
+      - "3003:80"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - micro-frontend-network
+
+networks:
+  micro-frontend-network:
+    driver: bridge
+
