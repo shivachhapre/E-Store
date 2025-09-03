@@ -3,10 +3,7 @@ services:
   - type: web
     name: shell-app
     env: static
-    buildCommand: |
-      cd apps/shell
-      npm install
-      npm run build
+    buildCommand: npm run build:render
     staticPublishPath: ./apps/shell/dist
     envVars:
       - key: NODE_ENV
@@ -22,10 +19,7 @@ services:
   - type: web
     name: home-module
     env: static
-    buildCommand: |
-      cd apps/home
-      npm install
-      npm run build
+    buildCommand: npm run build:render
     staticPublishPath: ./apps/home/dist
     envVars:
       - key: NODE_ENV
@@ -41,10 +35,7 @@ services:
   - type: web
     name: products-module
     env: static
-    buildCommand: |
-      cd apps/products
-      npm install
-      npm run build
+    buildCommand: npm run build:render
     staticPublishPath: ./apps/products/dist
     envVars:
       - key: NODE_ENV
@@ -60,10 +51,7 @@ services:
   - type: web
     name: profile-module
     env: static
-    buildCommand: |
-      cd apps/profile
-      npm install
-      npm run build
+    buildCommand: npm run build:render
     staticPublishPath: ./apps/profile/dist
     envVars:
       - key: NODE_ENV
